@@ -10,7 +10,7 @@ namespace Adagio
         
     }
 
-    void FileIOService::LoadAudio(std::string filepath, FileFormat format, AudioData& o_Audio)
+    void FileIOService::LoadAudio(std::string filepath, FileFormat format, AudioData& o_Audio) const
     {
         switch (format)
         {

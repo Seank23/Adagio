@@ -12,9 +12,15 @@ namespace Adagio
 		Application();
 		virtual ~Application();
 
+        int LoadAudio(std::string filePath);
+        int ClearAudio();
+
 	private:
-		FileIOService m_FileIOService;
+        FileIOService m_FileIOService;
 		PlaybackService m_PlaybackService;
 		AnalysisService m_AnalysisService;
+
+        std::shared_ptr<AudioData> m_AudioData;
+        bool m_AudioLoaded = false;
 	};
 }
