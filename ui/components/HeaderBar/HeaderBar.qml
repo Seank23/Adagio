@@ -14,20 +14,20 @@ Rectangle {
     Connections {
         target: uiController
         function onAudioLoading() {
-            lblInfo.text = ''
-            indLoading.running = true
+            root.infoText.text = 'Loading...'
+            root.loadingSpinner.running = true
         }
         function onAudioLoaded(success) {
-            lblInfo.text = success ? "Audio loaded successfully" : "Audio failed to load"
-            indLoading.running = false
+            root.infoText.text = success ? "Audio loaded successfully" : "Audio failed to load"
+            root.loadingSpinner.running = false
             btnOpenFile.text = 'Close'
-            timer.setTimeout(() => lblInfo.text = '', 5000);
+            timer.setTimeout(() => root.infoText.text = '', 5000);
         }
         function onAudioCleared(success) {
-            //lblInfo.text = success ? "Audio closed successfully" : "An error occuring when closing the audio file"
-            indLoading.running = false
+            root.infoText.text = success ? "Audio closed" : "An error occuring while closing the audio file"
+            root.loadingSpinner.running = false
             btnOpenFile.text = 'Open'
-            //timer.setTimeout(() => lblInfo.text = '', 5000);
+            timer.setTimeout(() => root.infoText.text = '', 5000);
         }
     }
 
@@ -47,25 +47,5 @@ Rectangle {
     FileDialog {
         id: fileDialog
         onAccepted: uiController.setOpenedFile(selectedFile)
-    }
-
-    BusyIndicator {
-        id: indLoading
-        anchors {
-            left: btnOpenFile.right
-            leftMargin: 20
-            verticalCenter: parent.verticalCenter
-        }
-        running: false
-    }
-
-    Text {
-        id: lblInfo
-        anchors {
-            left: btnOpenFile.right
-            leftMargin: 20
-            verticalCenter: parent.verticalCenter
-        }
-        text: ""
     }
 }

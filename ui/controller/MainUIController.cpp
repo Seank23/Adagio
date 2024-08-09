@@ -38,5 +38,6 @@ void MainUIController::onOpenedFileChanged()
             emit audioLoaded(status);
         }
     });
-    emit audioLoading();
+    if (m_openedFile.toStdString() != "")
+        emit audioLoading();
 }
