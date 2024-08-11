@@ -15,12 +15,15 @@ namespace Adagio
         int LoadAudio(std::string filePath);
         int ClearAudio();
 
+        std::vector<float> ConstructWaveformData();
+        float GetPlaybackSampleRate() { return m_AudioData->PlaybackSampleRate; }
+
 	private:
         FileIOService m_FileIOService;
 		PlaybackService m_PlaybackService;
 		AnalysisService m_AnalysisService;
 
-        std::shared_ptr<AudioData> m_AudioData;
+        AudioData* m_AudioData;
         bool m_AudioLoaded = false;
 	};
 }

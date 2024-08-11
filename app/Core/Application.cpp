@@ -9,6 +9,7 @@ namespace Adagio
 	Application::Application()
 	{
 		ADAGIO_PROFILE_BEGIN_SESSION("Application", "Application_Profile.json");
+        m_AudioData = new AudioData;
         // AudioData wavAudio;
         // m_FileIOService.LoadAudio("C:\\Users\\seank\\Documents\\Audacity\\Guitar Freq Analysis.wav", FileFormat::WAV, m_AudioData);
 
@@ -41,7 +42,6 @@ namespace Adagio
     {
         try
         {
-            m_AudioData = std::make_shared<AudioData>();
             std::filesystem::path path = filePath;
             auto extension = path.extension();
             if (extension == ".wav")
@@ -63,12 +63,25 @@ namespace Adagio
     {
         try
         {
-            m_AudioData = nullptr;
+            m_AudioData->Clear();
             m_AudioLoaded = false;
         } catch (...)
         {
             return -1;
         }
         return 1;
+    }
+
+    std::vector<float> Application::ConstructWaveformData()
+    {
+        auto playbackStream = m_AudioData->PlaybackStream;
+        std::vector<float> waveformData;
+        int streamLength = playbackStream[0].size();
+        for (int i = 0; i < streamLength; i++)
+        {
+            float waveformSample = (playbackStream[0][i] + playbackStream[1][i]) / 2.0f;
+            waveformData.push_back(waveformSample);
+        }
+        return waveformData;
     }
 }

@@ -13,21 +13,21 @@ Rectangle {
 
     Connections {
         target: uiController
-        function onAudioLoading() {
-            root.infoText.text = 'Loading...'
+        function onAudioLoading(message) {
+            root.infoText.text = message
             root.loadingSpinner.running = true
         }
         function onAudioLoaded(success) {
             root.infoText.text = success ? "Audio loaded successfully" : "Audio failed to load"
             root.loadingSpinner.running = false
             btnOpenFile.text = 'Close'
-            timer.setTimeout(() => root.infoText.text = '', 5000);
+            timer.setTimeout(() => root.infoText.text = '', 2000);
         }
         function onAudioCleared(success) {
             root.infoText.text = success ? "Audio closed" : "An error occuring while closing the audio file"
             root.loadingSpinner.running = false
             btnOpenFile.text = 'Open'
-            timer.setTimeout(() => root.infoText.text = '', 5000);
+            timer.setTimeout(() => root.infoText.text = '', 2000);
         }
     }
 

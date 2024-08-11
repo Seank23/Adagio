@@ -2,11 +2,12 @@ import QtQuick
 
 import "ui/components/HeaderBar"
 import "ui/components/BottomBar"
+import "ui/components/WaveformChart"
 
 Window {
     id: root
-    width: 1280
-    height: 720
+    width: 1920
+    height: 1080
     visible: true
     title: qsTr("Adagio")
 
@@ -21,8 +22,9 @@ Window {
         id: bottomBar
     }
 
-    //property alias infoText: bottomBar.lblInfo.text
-    //property alias loadingSpinner: bottomBar.indLoading.running
+    WaveformChart {
+        id: waveformChart
+    }
 
     Timer {
         id: timer

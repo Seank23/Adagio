@@ -3,16 +3,21 @@
 
 #include <QFileInfo>
 #include <QtConcurrent>
+#include <QXYSeries>
 
 MainUIController::MainUIController(Adagio::Application* app, QObject* parent)
-    : QObject{parent}, m_AdagioApp(app)
+    : QObject{parent}, m_AdagioApp(app), m_openedFile(""), m_SampleRate(0.0f)
 {
     QObject::connect(this, &MainUIController::openedFileChanged, this, &MainUIController::onOpenedFileChanged);
 }
 
-QString MainUIController::openedFile() const
+void MainUIController::updateWaveform(QAbstractSeries *series)
 {
-    return m_openedFile;
+    if (series) {
+        auto xySeries = static_cast<QXYSeries *>(series);
+        xySeries->replace(m_WaveformDataArray);
+        emit waveformUpdated(0, m_WaveformDataArray.size());
+    }
 }
 
 void MainUIController::setOpenedFile(const QString &newOpenedFile)
@@ -29,15 +34,30 @@ void MainUIController::onOpenedFileChanged()
     {
         if (m_openedFile.toStdString() == "")
         {
+            // Close audio file
             int status = m_AdagioApp->ClearAudio();
+            m_WaveformDataArray.clear();
+            m_openedFile = "";
+            m_SampleRate = 0.0f;
             emit audioCleared(status);
         }
         else
         {
+            // Open audio file
             int status = m_AdagioApp->LoadAudio(m_openedFile.toStdString());
+            emit audioLoading("Constructing waveform...");
+            std::vector<float> waveformDataVec = m_AdagioApp->ConstructWaveformData();
+
+            m_SampleRate = m_AdagioApp->GetPlaybackSampleRate();
+            for (int i = 0; i < waveformDataVec.size(); i++)
+            {
+                QPointF point(i, waveformDataVec[i]);
+                m_WaveformDataArray.append(point);
+            }
+
             emit audioLoaded(status);
         }
     });
     if (m_openedFile.toStdString() != "")
-        emit audioLoading();
+        emit audioLoading("Loading audio...");
 }

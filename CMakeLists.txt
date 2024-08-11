@@ -40,13 +40,14 @@ set_target_properties(appAdagio PROPERTIES
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Concurrent)
+find_package(Qt6 REQUIRED COMPONENTS Charts)
 
 include_directories(vendor/miniaudio)
 include_directories(vendor/kfr/include)
 add_subdirectory(vendor/kfr)
 
 target_link_libraries(appAdagio
-    PRIVATE Qt6::Quick Qt6::Concurrent kfr_dft kfr_dsp kfr_io
+    PRIVATE Qt6::Quick Qt6::Concurrent Qt6::Charts kfr_dft kfr_dsp kfr_io
 )
 
 include(GNUInstallDirs)
