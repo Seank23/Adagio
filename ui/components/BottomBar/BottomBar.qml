@@ -3,12 +3,19 @@ import QtQuick.Controls
 
 Rectangle {
     id: bottomBar
-    anchors {
-        left: parent.left
-        right: parent.right
-        bottom: parent.bottom
+
+    Connections {
+        target: uiController
+        function onLoading(message) {
+            lblInfo.text = message;
+            indLoading.running = true;
+        }
+        function onLoaded(message) {
+            lblInfo.text = message;
+            indLoading.running = false;
+            timer.setTimeout(() => lblInfo.text = '', 2000);
+        }
     }
-    height: 50
 
     BusyIndicator {
         id: indLoading
@@ -17,7 +24,6 @@ Rectangle {
             rightMargin: 20
             verticalCenter: parent.verticalCenter
         }
-        Component.onCompleted: root.loadingSpinner = indLoading
         running: false
     }
 
@@ -28,7 +34,6 @@ Rectangle {
             rightMargin: 20
             verticalCenter: parent.verticalCenter
         }
-        Component.onCompleted: root.infoText = lblInfo
         text: ""
     }
 }

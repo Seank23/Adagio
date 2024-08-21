@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QtQml>
 #include <QPointF>
+#include <QXYSeries>
 
 QT_FORWARD_DECLARE_CLASS(QAbstractSeries)
 
@@ -19,7 +20,10 @@ public:
     QString openedFile() const { return m_openedFile; }
     Q_INVOKABLE const float getSampleRate() const { return m_SampleRate; }
     Q_INVOKABLE const float getWaveformSize() const { return m_WaveformDataArray.size(); }
-    Q_INVOKABLE void updateWaveform(QAbstractSeries* series);
+
+    Q_INVOKABLE void initialiseWaveformSeries(QAbstractSeries* seriesMax, QAbstractSeries* seriesMin);
+    Q_INVOKABLE void updateWaveformScale(int componentWidth, float boundingMin, float boundingMax);
+    Q_INVOKABLE void updateWaveformPosition(float boundingChange);
 
 
 public slots:
@@ -28,16 +32,21 @@ public slots:
 
 signals:
     void openedFileChanged();
-    void audioLoading(QString statusMessage);
+    void loading(QString statusMessage);
+    void loaded(QString statusMessage);
     void audioLoaded(int success);
     void audioCleared(int success);
-    void waveformUpdated(int minSample, int maxSample);
+    void waveformUpdated(float boundingMin, float boundingMax);
 
 private:
     Adagio::Application* m_AdagioApp;
     QString m_openedFile;
-    QList<QPointF> m_WaveformDataArray;
+    std::vector<float> m_WaveformDataArray;
     float m_SampleRate;
+
+    QXYSeries* m_SeriesMax;
+    QXYSeries* m_SeriesMin;
+    int m_BlockCount, m_MinSample, m_MaxSample;
 };
 
 #endif // MAINUICONTROLLER_H

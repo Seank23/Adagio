@@ -6,24 +6,42 @@ import "ui/components/WaveformChart"
 
 Window {
     id: root
-    width: 1920
-    height: 1080
+    width: 1600
+    height: 900
     visible: true
     title: qsTr("Adagio")
 
-    property var infoText
-    property var loadingSpinner
-
     HeaderBar {
         id: headerBar
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+        }
+        height: 100
     }
 
     BottomBar {
         id: bottomBar
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: 50
     }
 
     WaveformChart {
         id: waveformChart
+        anchors {
+            top: headerBar.bottom
+            left: parent.left
+            right: parent.right
+            topMargin: 20
+            // leftMargin: 20
+            rightMargin: 20
+        }
+        height: parent.height / 4
     }
 
     Timer {

@@ -4,30 +4,14 @@ import QtQuick.Dialogs
 
 Rectangle {
     id: headerBarContainer
-    anchors {
-        left: parent.left
-        right: parent.right
-        top: parent.top
-    }
-    height: 100
 
     Connections {
         target: uiController
-        function onAudioLoading(message) {
-            root.infoText.text = message
-            root.loadingSpinner.running = true
-        }
         function onAudioLoaded(success) {
-            root.infoText.text = success ? "Audio loaded successfully" : "Audio failed to load"
-            root.loadingSpinner.running = false
-            btnOpenFile.text = 'Close'
-            timer.setTimeout(() => root.infoText.text = '', 2000);
+            btnOpenFile.text = 'Close' 
         }
         function onAudioCleared(success) {
-            root.infoText.text = success ? "Audio closed" : "An error occuring while closing the audio file"
-            root.loadingSpinner.running = false
             btnOpenFile.text = 'Open'
-            timer.setTimeout(() => root.infoText.text = '', 2000);
         }
     }
 
