@@ -126,7 +126,8 @@ void MainUIController::onOpenedFileChanged()
             emit loading("Constructing waveform...");
             m_WaveformDataArray = m_AdagioApp->ConstructWaveformData();
             m_SampleRate = m_AdagioApp->GetPlaybackSampleRate();
-            emit audioLoaded(status);
+            if (status)
+                emit audioLoaded(m_WaveformDataArray.size(), m_SampleRate);
             emit loaded(status ? "Audio loaded successfully" : "Audio failed to load");
         }
     });

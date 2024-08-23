@@ -34,7 +34,7 @@ signals:
     void openedFileChanged();
     void loading(QString statusMessage);
     void loaded(QString statusMessage);
-    void audioLoaded(int success);
+    void audioLoaded(int sampleCount, float sampleRate);
     void audioCleared(int success);
     void waveformUpdated(float boundingMin, float boundingMax);
 

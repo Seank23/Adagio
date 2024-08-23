@@ -38,7 +38,7 @@ Window {
             left: parent.left
             right: parent.right
             topMargin: 20
-            // leftMargin: 20
+            leftMargin: 20
             rightMargin: 20
         }
         height: parent.height / 4

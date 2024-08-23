@@ -1,11 +1,7 @@
 import QtQuick 2.15
 import QtCharts
 
-ChartView {
-    id: cvAudioViewer
-    visible: false
-    legend.visible: false
-    antialiasing: true
+Rectangle {
 
     property int resolution: cvAudioViewer.width / 3
     property real boundingMin: 0.0
@@ -13,54 +9,30 @@ ChartView {
     property real mousePosX: 0.0
     property real regionWidth: 1.0
 
+    property int sampleCount: 0
+    property real sampleRate: 0.0
+
     Connections {
         target: uiController
-        function onAudioLoaded(success) {
+        function onAudioLoaded(_sampleCount, _sampleRate) {
+            sampleCount = _sampleCount;
+            sampleRate = _sampleRate;
             uiController.initialiseWaveformSeries(cvAudioViewer.series(0).upperSeries, cvAudioViewer.series(0).lowerSeries);
             uiController.updateWaveformScale(resolution, boundingMin, boundingMax);
             cvAudioViewer.visible = true;
+            durationAxis.visible = true;
         }
         function onAudioCleared(success) {
             cvAudioViewer.visible = false;
+            durationAxis.visible = false;
         }
         function onWaveformUpdated(min, max) {
             boundingMin = min;
             boundingMax = max;
+            const minSeconds = boundingMin * sampleCount / sampleRate;
+            const maxSeconds = boundingMax * sampleCount / sampleRate;
+            console.log(minSeconds, maxSeconds);
         }
-    }
-
-    ValueAxis {
-        id: axisY
-        min: -1
-        max: 1
-        visible: false
-    }
-
-    ValueAxis {
-        id: axisX
-        min: 0
-        max: resolution
-        gridVisible: false
-        tickType: ValueAxis.TicksDynamic
-        tickAnchor: 0
-        tickInterval: 200
-    }
-
-    AreaSeries {
-        id: plot
-        axisX: axisX
-        axisY: axisY
-        color: '#429ef5'
-        upperSeries: LineSeries {}
-        lowerSeries: LineSeries {}
-        useOpenGL: true
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onWheel: (event) => updateBoundingsForZoom(event)
-        onPositionChanged: (event) => updateBoundingsForMove(event)
-        onClicked: (event) => mousePosX = event.x
     }
 
     function updateBoundingsForZoom(wheelEvent) {
@@ -81,5 +53,65 @@ ChartView {
             const scrollAmount = -boundingChange / regionWidth;
             uiController.updateWaveformPosition(scrollAmount);
         }
+    }
+
+    ChartView {
+        id: cvAudioViewer
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            leftMargin: -15
+            rightMargin: 5
+        }
+        height: parent.height - durationAxis.height
+        visible: true
+        legend.visible: false
+        antialiasing: true
+
+        ValueAxis {
+            id: axisY
+            min: -1
+            max: 1
+            visible: false
+        }
+
+        ValueAxis {
+            id: axisX
+            min: 0
+            max: resolution
+            visible: false
+        }
+
+        AreaSeries {
+            id: plot
+            axisX: axisX
+            axisY: axisY
+            color: '#429ef5'
+            upperSeries: LineSeries {}
+            lowerSeries: LineSeries {}
+            useOpenGL: true
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onWheel: (event) => updateBoundingsForZoom(event)
+            onPositionChanged: (event) => updateBoundingsForMove(event)
+            onClicked: (event) => mousePosX = event.x
+        }
+    }
+
+    Rectangle {
+        id: durationAxis
+        anchors {
+            top: cvAudioViewer.bottom
+            left: parent.left
+            right: parent.right
+            leftMargin: 40
+            rightMargin: 40
+        }
+        height: 20
+        color: '#ededed'
+        visible: false
     }
 }
