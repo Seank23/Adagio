@@ -8,6 +8,7 @@ MainUIController::MainUIController(Adagio::Application* app, QObject* parent)
     : QObject{parent}, m_AdagioApp(app), m_openedFile(""), m_SampleRate(0.0f)
 {
     QObject::connect(this, &MainUIController::openedFileChanged, this, &MainUIController::onOpenedFileChanged);
+    setAudioState(m_AdagioApp->GetAudioState());
 }
 
 void MainUIController::updateWaveformScale(int componentWidth, float boundingMin, float boundingMax)
@@ -88,6 +89,43 @@ void MainUIController::updateWaveformPosition(float boundingChange)
         m_SeriesMax->replace(newWaveformMax);
         m_SeriesMin->replace(newWaveformMin);
         emit waveformUpdated(m_MinSample / (float)sampleCount, m_MaxSample / (float)sampleCount);
+    }
+}
+
+void MainUIController::playAudio()
+{
+    m_AdagioApp->UpdateAudioState(Adagio::PlayState::PLAYING);
+    setAudioState(m_AdagioApp->GetAudioState());
+}
+
+void MainUIController::pauseAudio()
+{
+    m_AdagioApp->UpdateAudioState(Adagio::PlayState::PAUSED);
+    setAudioState(m_AdagioApp->GetAudioState());
+}
+
+void MainUIController::stopAudio()
+{
+    m_AdagioApp->UpdateAudioState(Adagio::PlayState::STOPPED);
+    setAudioState(m_AdagioApp->GetAudioState());
+}
+
+void MainUIController::setAudioState(Adagio::PlayState playState)
+{
+    switch (playState)
+    {
+    case Adagio::PlayState::NOT_STARTED:
+        m_AudioState = "NOT_STARTED";
+        break;
+    case Adagio::PlayState::PLAYING:
+        m_AudioState = "PLAYING";
+        break;
+    case Adagio::PlayState::PAUSED:
+        m_AudioState = "PAUSED";
+        break;
+    case Adagio::PlayState::STOPPED:
+        m_AudioState = "STOPPED";
+        break;
     }
 }
 

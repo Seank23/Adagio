@@ -2,6 +2,7 @@
 #define MAINUICONTROLLER_H
 
 #include "app/Core/Application.h"
+#include "app/API/Utils.h"
 
 #include <QObject>
 #include <QtQml>
@@ -25,6 +26,12 @@ public:
     Q_INVOKABLE void updateWaveformScale(int componentWidth, float boundingMin, float boundingMax);
     Q_INVOKABLE void updateWaveformPosition(float boundingChange);
 
+    Q_INVOKABLE void playAudio();
+    Q_INVOKABLE void pauseAudio();
+    Q_INVOKABLE void stopAudio();
+    Q_INVOKABLE QString getAudioState() { return m_AudioState; }
+    void setAudioState(Adagio::PlayState playState);
+
 
 public slots:
     void setOpenedFile(const QString &newOpenedFile);
@@ -43,6 +50,7 @@ private:
     QString m_openedFile;
     std::vector<float> m_WaveformDataArray;
     float m_SampleRate;
+    QString m_AudioState;
 
     QXYSeries* m_SeriesMax;
     QXYSeries* m_SeriesMin;

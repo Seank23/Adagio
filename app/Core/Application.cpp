@@ -7,6 +7,7 @@
 namespace Adagio
 {
 	Application::Application()
+    : m_AudioState(PlayState::NOT_STARTED)
 	{
 		ADAGIO_PROFILE_BEGIN_SESSION("Application", "Application_Profile.json");
         m_AudioData = new AudioData;
@@ -55,7 +56,10 @@ namespace Adagio
             return -1;
         }
         if (m_AudioData != nullptr)
+        {
             m_AudioLoaded = true;
+            m_PlaybackService.InitAudio(*m_AudioData);
+        }
         return 1;
     }
 
@@ -70,6 +74,25 @@ namespace Adagio
             return -1;
         }
         return 1;
+    }
+
+    void Application::UpdateAudioState(PlayState state)
+    {
+        m_AudioState = state;
+        switch (m_AudioState)
+        {
+        case PlayState::NOT_STARTED:
+            break;
+        case PlayState::PLAYING:
+            m_PlaybackService.PlayAudio();
+            break;
+        case PlayState::PAUSED:
+            m_PlaybackService.PauseAudio();
+            break;
+        case PlayState::STOPPED:
+            m_PlaybackService.StopAudio();
+            break;
+        }
     }
 
     std::vector<float> Application::ConstructWaveformData()

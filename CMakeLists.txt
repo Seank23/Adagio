@@ -23,6 +23,8 @@ qt_add_qml_module(appAdagio
         QML_FILES ui/components/HeaderBar/HeaderBar.qml
         QML_FILES ui/components/BottomBar/BottomBar.qml
         QML_FILES ui/components/WaveformChart/WaveformChart.qml
+        SOURCES app/API/Utils.h
+        SOURCES
 )
 
 include(PrecompiledHeader.cmake)

@@ -54,8 +54,15 @@ namespace Adagio
 		ma_device_start(&m_PlaybackDevice);
 	}
 
+    void PlaybackService::PauseAudio()
+    {
+        ma_device_stop(&m_PlaybackDevice);
+    }
+
 	void PlaybackService::StopAudio()
 	{
 		ma_device_stop(&m_PlaybackDevice);
+        ma_audio_buffer* pBuffer = (ma_audio_buffer*)m_PlaybackDevice.pUserData;
+        ma_audio_buffer_seek_to_pcm_frame(pBuffer, 0);
 	}
 }
