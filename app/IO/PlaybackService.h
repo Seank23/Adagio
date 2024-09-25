@@ -16,12 +16,12 @@ namespace Adagio
 		}
 		~PlaybackService();
 
-		int InitAudio(AudioData& audioData);
+        int InitAudio(AudioData* audioData);
 		void PlayAudio();
         void PauseAudio();
         void StopAudio();
 
-		inline void SetCurrentSample(uint64_t sample) { m_AudioBuffer.ref.cursor = sample; }
+        inline void SetCurrentSample(uint64_t sample) { m_AudioBuffer.ref.cursor = sample; }
 		inline uint64_t GetCurrentSample() { return m_AudioBuffer.ref.cursor; }
 		inline uint64_t GetSampleCount() { return m_AudioBuffer.ref.sizeInFrames; }
 

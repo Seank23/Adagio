@@ -58,7 +58,7 @@ namespace Adagio
         if (m_AudioData != nullptr)
         {
             m_AudioLoaded = true;
-            m_PlaybackService.InitAudio(*m_AudioData);
+            m_PlaybackService.InitAudio(m_AudioData);
         }
         return 1;
     }

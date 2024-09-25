@@ -5,13 +5,17 @@ import QtQuick.Dialogs
 Rectangle {
     id: headerBarContainer
 
+    property bool audioOpen: false
+
     Connections {
         target: uiController
         function onAudioLoaded(success) {
-            btnOpenFile.text = 'Close' 
+            btnOpenFile.text = 'Close';
+            audioOpen = true;
         }
         function onAudioCleared(success) {
-            btnOpenFile.text = 'Open'
+            btnOpenFile.text = 'Open';
+            audioOpen = false;
         }
     }
 
@@ -38,30 +42,39 @@ Rectangle {
         onClicked: uiController.openedFile === '' ? fileDialog.open() : uiController.setOpenedFile('')
     }
 
-    Button {
-        id: btnPlay
-        text: 'Play'
+    Rectangle {
+        id: playbackButtonContainer
         anchors {
             left: btnOpenFile.right
             leftMargin: 30
             verticalCenter: parent.verticalCenter
         }
-        width: 100
-        height: 30
-        onClicked: () => onPlayClicked()
-    }
+        visible: audioOpen
 
-    Button {
-        id: btnStop
-        text: 'Stop'
-        anchors {
-            left: btnPlay.right
-            leftMargin: 30
-            verticalCenter: parent.verticalCenter
+        Button {
+            id: btnPlay
+            text: 'Play'
+            anchors {
+                left: parent.left
+                verticalCenter: parent.verticalCenter
+            }
+            width: 100
+            height: 30
+            onClicked: () => onPlayClicked()
         }
-        width: 100
-        height: 30
-        onClicked: () => onStopClicked()
+
+        Button {
+            id: btnStop
+            text: 'Stop'
+            anchors {
+                left: btnPlay.right
+                leftMargin: 30
+                verticalCenter: parent.verticalCenter
+            }
+            width: 100
+            height: 30
+            onClicked: () => onStopClicked()
+        }
     }
 
     FileDialog {

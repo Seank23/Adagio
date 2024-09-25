@@ -8,6 +8,7 @@
 #include <QtQml>
 #include <QPointF>
 #include <QXYSeries>
+#include <QTimer>
 
 QT_FORWARD_DECLARE_CLASS(QAbstractSeries)
 
@@ -32,6 +33,9 @@ public:
     Q_INVOKABLE QString getAudioState() { return m_AudioState; }
     void setAudioState(Adagio::PlayState playState);
 
+    Q_INVOKABLE float getPlaybackPosition() { return m_AdagioApp->GetAudioCurrentSample() / m_AdagioApp->GetAudioSampleCount(); }
+    Q_INVOKABLE void setPlaybackPosition(float newPos);
+
 
 public slots:
     void setOpenedFile(const QString &newOpenedFile);
@@ -44,6 +48,7 @@ signals:
     void audioLoaded(int sampleCount, float sampleRate);
     void audioCleared(int success);
     void waveformUpdated(float boundingMin, float boundingMax);
+    void playbackPositionUpdate(float position);
 
 private:
     Adagio::Application* m_AdagioApp;
@@ -55,6 +60,11 @@ private:
     QXYSeries* m_SeriesMax;
     QXYSeries* m_SeriesMin;
     int m_BlockCount, m_MinSample, m_MaxSample;
+
+    int m_PlaybackTimerId;
+
+protected:
+    void timerEvent(QTimerEvent *event);
 };
 
 #endif // MAINUICONTROLLER_H

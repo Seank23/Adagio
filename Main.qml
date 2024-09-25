@@ -46,9 +46,9 @@ Window {
 
     Timer {
         id: timer
-        function setTimeout(cb, delayTime) {
+        function setTimeout(cb, delayTime, repeat) {
             timer.interval = delayTime;
-            timer.repeat = false;
+            timer.repeat = repeat || false;
             timer.triggered.connect(cb);
             timer.triggered.connect(function release () {
                 timer.triggered.disconnect(cb); // This is important

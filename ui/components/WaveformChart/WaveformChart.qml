@@ -15,6 +15,11 @@ Rectangle {
     property real minTime: 0.0
     property real maxTime: 0.0
 
+    property int indicatorMarginLeft: 57
+    property int indicatorMarginRight: 32
+
+    property real cursorPos: 0.0
+
     Connections {
         target: uiController
         function onAudioLoaded(_sampleCount, _sampleRate) {
@@ -27,6 +32,8 @@ Rectangle {
         }
         function onAudioCleared(success) {
             cvAudioViewer.visible = false;
+            boundingMin = 0.0;
+            boundingMax = 1.0;
             // durationAxis.visible = false;
         }
         function onWaveformUpdated(min, max) {
@@ -35,6 +42,20 @@ Rectangle {
             minTime = min * sampleCount / sampleRate;
             maxTime = max * sampleCount / sampleRate;
         }
+        function onPlaybackPositionUpdate(position) {
+            updateCursorPosition(position);
+        }
+    }
+
+    function updateCursorPosition(position) {
+        cursorPos = position;
+        const scale = (cvAudioViewer.width - indicatorMarginLeft - indicatorMarginRight) / (boundingMax - boundingMin);
+        if (position < boundingMin)
+            playbackIndicator.width = 0;
+        else if (position > boundingMax)
+            playbackIndicator.width = scale;
+        else
+            playbackIndicator.width = (position - boundingMin) * scale;
     }
 
     function updateBoundingsForZoom(wheelEvent) {
@@ -65,6 +86,35 @@ Rectangle {
         const secondsStr = seconds < 10 ? `0${seconds}` : seconds.toString();
         const msStr = (milliseconds.toFixed(3) * 1000).toString();
         return `${minutesStr}:${secondsStr}.${msStr}`;
+    }
+
+    function onClick(event) {
+        switch (event.button) {
+        case Qt.LeftButton:
+            const newCursorPos = boundingMin + ((boundingMax - boundingMin) * ((event.x - indicatorMarginLeft) / (cvAudioViewer.width - indicatorMarginLeft - indicatorMarginRight)));
+            uiController.setPlaybackPosition(newCursorPos);
+            updateCursorPosition(newCursorPos);
+            break;
+        case Qt.RightButton:
+            mousePosX = event.x;
+            break;
+        };
+    }
+
+    function onPositionChange(event) {
+        switch (event.buttons) {
+        case Qt.LeftButton:
+            break;
+        case Qt.RightButton:
+            updateBoundingsForMove(event);
+            updateCursorPosition(cursorPos);
+            break;
+        };
+    }
+
+    function onScroll(event) {
+        updateBoundingsForZoom(event);
+        updateCursorPosition(cursorPos);
     }
 
     ChartView {
@@ -106,10 +156,24 @@ Rectangle {
         }
 
         MouseArea {
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            onWheel: (event) => updateBoundingsForZoom(event)
-            onPositionChanged: (event) => updateBoundingsForMove(event)
-            onClicked: (event) => mousePosX = event.x
+            onWheel: (event) => onScroll(event)
+            onPositionChanged: (event) => onPositionChange(event)
+            onClicked: (event) => onClick(event)
+        }
+
+        Rectangle {
+            id: playbackIndicator
+            anchors {
+                left: cvAudioViewer.left
+                top: cvAudioViewer.top
+                bottom: cvAudioViewer.bottom
+                leftMargin: indicatorMarginLeft
+            }
+            width: 0
+            opacity: 0.5
+            color: '#ffffff'
         }
     }
 

@@ -21,6 +21,11 @@ namespace Adagio
 
         std::vector<float> ConstructWaveformData();
         float GetPlaybackSampleRate() { return m_AudioData->PlaybackSampleRate; }
+        float GetAudioDuration() { return m_AudioData->Duration; }
+        uint64_t GetAudioSampleCount() { return m_PlaybackService.GetSampleCount(); }
+        uint64_t GetAudioCurrentSample() { return m_PlaybackService.GetCurrentSample(); }
+
+        void SetPlaybackPosition(uint64_t sampleIndex) { m_PlaybackService.SetCurrentSample(sampleIndex); }
 
 	private:
         FileIOService m_FileIOService;

@@ -119,14 +119,24 @@ void MainUIController::setAudioState(Adagio::PlayState playState)
         break;
     case Adagio::PlayState::PLAYING:
         m_AudioState = "PLAYING";
+        m_PlaybackTimerId = startTimer(1.0f / 60.0f);
         break;
     case Adagio::PlayState::PAUSED:
         m_AudioState = "PAUSED";
+        killTimer(m_PlaybackTimerId);
         break;
     case Adagio::PlayState::STOPPED:
         m_AudioState = "STOPPED";
+        emit playbackPositionUpdate(0.0f);
+        killTimer(m_PlaybackTimerId);
         break;
     }
+}
+
+void MainUIController::setPlaybackPosition(float newPos)
+{
+    int sampleIndex = newPos * m_AdagioApp->GetAudioSampleCount();
+    m_AdagioApp->SetPlaybackPosition(sampleIndex);
 }
 
 void MainUIController::initialiseWaveformSeries(QAbstractSeries *seriesMax, QAbstractSeries *seriesMin)
@@ -150,6 +160,7 @@ void MainUIController::onOpenedFileChanged()
         if (m_openedFile.toStdString() == "")
         {
             // Close audio file
+            stopAudio();
             int status = m_AdagioApp->ClearAudio();
             m_WaveformDataArray.clear();
             m_openedFile = "";
@@ -171,4 +182,10 @@ void MainUIController::onOpenedFileChanged()
     });
     if (m_openedFile.toStdString() != "")
         emit loading("Loading audio...");
+}
+
+void MainUIController::timerEvent(QTimerEvent *event)
+{
+    float playbackPosition = (float)m_AdagioApp->GetAudioCurrentSample() / (float)m_AdagioApp->GetAudioSampleCount();
+    emit playbackPositionUpdate(playbackPosition);
 }

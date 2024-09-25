@@ -24,9 +24,9 @@ namespace Adagio
 		(void)pInput;
 	}
 
-	int PlaybackService::InitAudio(AudioData& audioData)
+    int PlaybackService::InitAudio(AudioData* audioData)
 	{
-		m_AudioData = &audioData;
+        m_AudioData = audioData;
 		m_InterleavedStream.clear();
 
 		if (m_AudioData->Channels == 2)
@@ -42,7 +42,7 @@ namespace Adagio
 		deviceConfig.playback.channels = m_AudioData->Channels;
 		deviceConfig.sampleRate = m_AudioData->PlaybackSampleRate;
 		deviceConfig.dataCallback = DataCallback;
-		deviceConfig.pUserData = &m_AudioBuffer;
+        deviceConfig.pUserData = &m_AudioBuffer;
 
 		if (ma_device_init(NULL, &deviceConfig, &m_PlaybackDevice) != MA_SUCCESS)
 			return -1;
@@ -62,7 +62,6 @@ namespace Adagio
 	void PlaybackService::StopAudio()
 	{
 		ma_device_stop(&m_PlaybackDevice);
-        ma_audio_buffer* pBuffer = (ma_audio_buffer*)m_PlaybackDevice.pUserData;
-        ma_audio_buffer_seek_to_pcm_frame(pBuffer, 0);
+        SetCurrentSample(0);
 	}
 }
