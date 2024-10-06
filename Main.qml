@@ -1,10 +1,13 @@
 import QtQuick
+import QtQuick.Controls.Fusion
+import AppStyle
 
 import "ui/components/HeaderBar"
 import "ui/components/BottomBar"
 import "ui/components/WaveformChart"
 
-Window {
+ApplicationWindow {
+    palette: AppStyle.dark
     id: root
     width: 1600
     height: 900

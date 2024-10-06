@@ -20,7 +20,6 @@ public:
     explicit MainUIController(Adagio::Application* app, QObject* parent = nullptr);
 
     QString openedFile() const { return m_openedFile; }
-    Q_INVOKABLE const float getSampleRate() const { return m_SampleRate; }
     Q_INVOKABLE const float getWaveformSize() const { return m_WaveformDataArray.size(); }
 
     Q_INVOKABLE void initialiseWaveformSeries(QAbstractSeries* seriesMax, QAbstractSeries* seriesMin);
@@ -35,6 +34,7 @@ public:
 
     Q_INVOKABLE float getPlaybackPosition() { return m_AdagioApp->GetAudioCurrentSample() / m_AdagioApp->GetAudioSampleCount(); }
     Q_INVOKABLE void setPlaybackPosition(float newPos);
+    Q_INVOKABLE float getPlaybackTime() { return m_AdagioApp->GetAudioCurrentSample() / m_SampleRate; }
 
 
 public slots:
@@ -48,7 +48,7 @@ signals:
     void audioLoaded(int sampleCount, float sampleRate);
     void audioCleared(int success);
     void waveformUpdated(float boundingMin, float boundingMax);
-    void playbackPositionUpdate(float position);
+    void playbackPositionUpdate(float position, float time);
 
 private:
     Adagio::Application* m_AdagioApp;

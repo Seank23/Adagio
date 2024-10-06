@@ -5,7 +5,7 @@
 #include <QtConcurrent>
 
 MainUIController::MainUIController(Adagio::Application* app, QObject* parent)
-    : QObject{parent}, m_AdagioApp(app), m_openedFile(""), m_SampleRate(0.0f)
+    : QObject{parent}, m_AdagioApp(app), m_openedFile(""), m_SampleRate(1.0f)
 {
     QObject::connect(this, &MainUIController::openedFileChanged, this, &MainUIController::onOpenedFileChanged);
     setAudioState(m_AdagioApp->GetAudioState());
@@ -127,7 +127,7 @@ void MainUIController::setAudioState(Adagio::PlayState playState)
         break;
     case Adagio::PlayState::STOPPED:
         m_AudioState = "STOPPED";
-        emit playbackPositionUpdate(0.0f);
+        emit playbackPositionUpdate(0.0f, 0.0f);
         killTimer(m_PlaybackTimerId);
         break;
     }
@@ -164,7 +164,7 @@ void MainUIController::onOpenedFileChanged()
             int status = m_AdagioApp->ClearAudio();
             m_WaveformDataArray.clear();
             m_openedFile = "";
-            m_SampleRate = 0.0f;
+            m_SampleRate = 1.0f;
             emit audioCleared(status);
             emit loaded(status ? "Audio closed" : "An error occuring while closing the audio file");
         }
@@ -187,5 +187,6 @@ void MainUIController::onOpenedFileChanged()
 void MainUIController::timerEvent(QTimerEvent *event)
 {
     float playbackPosition = (float)m_AdagioApp->GetAudioCurrentSample() / (float)m_AdagioApp->GetAudioSampleCount();
-    emit playbackPositionUpdate(playbackPosition);
+    float playbackTime = (float)m_AdagioApp->GetAudioCurrentSample() / m_SampleRate;
+    emit playbackPositionUpdate(playbackPosition, playbackTime);
 }

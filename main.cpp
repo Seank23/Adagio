@@ -2,6 +2,8 @@
 #include <QQmlContext>
 #include <QApplication>
 #include <QQuickWindow>
+#include <QPalette>
+#include <QStyleFactory>
 
 #include "app/Core/Application.h"
 #include "ui/controller/MainUIController.h"
@@ -17,6 +19,9 @@ int main(int argc, char *argv[])
 
     QQmlContext* context(engine.rootContext());
     context->setContextProperty("uiController", &mainUIController);
+
+    qmlRegisterSingletonType(QStringLiteral("qrc:/ui/components/Theme/AppStyle.qml"),"AppStyle",1,0,"AppStyle");
+    qmlRegisterSingletonType(QUrl(QStringLiteral("qrc:/ui/components/Theme/FontStyle.qml")),"AppStyle",1,0,"FontStyle");
 
     QObject::connect(
         &engine,

@@ -1,8 +1,9 @@
 import QtQuick 2.15
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 import QtQuick.Dialogs
+import AppStyle
 
-Rectangle {
+Frame {
     id: headerBarContainer
 
     property bool audioOpen: false
@@ -42,7 +43,7 @@ Rectangle {
         onClicked: uiController.openedFile === '' ? fileDialog.open() : uiController.setOpenedFile('')
     }
 
-    Rectangle {
+    Item {
         id: playbackButtonContainer
         anchors {
             left: btnOpenFile.right

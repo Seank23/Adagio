@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Adagio VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
 
@@ -10,7 +11,14 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 qt_add_executable(appAdagio
     main.cpp
+    qml.qrc
 )
+
+set_source_files_properties(ui/components/Theme/AppStyle.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+set_source_files_properties(ui/components/Theme/FontStyle.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 qt_add_qml_module(appAdagio
     URI Adagio
@@ -25,6 +33,10 @@ qt_add_qml_module(appAdagio
         QML_FILES ui/components/WaveformChart/WaveformChart.qml
         SOURCES app/API/Utils.h
         SOURCES
+        QML_FILES ui/components/Theme/AppStyle.qml
+        QML_FILES ui/components/Theme/FontStyle.qml
+        RESOURCES qml.qrc
+        RESOURCES
 )
 
 include(PrecompiledHeader.cmake)
@@ -41,15 +53,14 @@ set_target_properties(appAdagio PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-find_package(Qt6 REQUIRED COMPONENTS Concurrent)
-find_package(Qt6 REQUIRED COMPONENTS Charts)
+find_package(Qt6 REQUIRED COMPONENTS Concurrent Charts QuickControls2)
 
 include_directories(vendor/miniaudio)
 include_directories(vendor/kfr/include)
 add_subdirectory(vendor/kfr)
 
 target_link_libraries(appAdagio
-    PRIVATE Qt6::Quick Qt6::Concurrent Qt6::Charts kfr_dft kfr_dsp kfr_io
+    PRIVATE Qt6::Quick Qt6::Concurrent Qt6::Charts Qt6::QuickControls2 kfr_dft kfr_dsp kfr_io
 )
 
 include(GNUInstallDirs)

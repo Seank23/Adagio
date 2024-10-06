@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls
 
-Rectangle {
+Frame {
     id: bottomBar
 
     Connections {
@@ -27,7 +27,7 @@ Rectangle {
         running: false
     }
 
-    Text {
+    Label {
         id: lblInfo
         anchors {
             right: indLoading.left
